@@ -53,8 +53,10 @@ app.post('/api/v1/signin',async (c)=>{
       message : "user not found"
     })
   }
-
   const jwt = sign ({id:userExists.id},c.env.DATABASE_URL)
+  return c.json({
+    jwt:jwt
+  })
 })
 
 app.get('/api/v1/blog/:id',(c)=>{
@@ -68,7 +70,7 @@ app.post('/api/v1/blog',(c)=>{
 })
 
 app.put('/api/v1/blog',(c)=>{
-  
+
   return c.text('read')
 })
 
