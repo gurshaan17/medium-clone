@@ -33,30 +33,38 @@ app.post('/api/v1/signup', async (c) => {
   } 
 });
 
+
+
 app.post('/api/v1/signin',async (c)=>{
   const prisma = new PrismaClient({
 		datasourceUrl: c.env.DATABASE_URL,
 	}).$extends(withAccelerate());
 
   const body = await  c.req.json()
-  const userExists = await prisma.user.findUnique({
-    //@ts-ignore
-    where:{
-      email:body.email,
-      password:body.password
+  try{
+    const userExists = await prisma.user.findUnique({
+      where:{
+        email:body.email,
+        password:body.password
+      }
+    })
+  
+    if(!userExists){
+      c.status(403)
+      return c.json({
+        message : "user not found"
+      })
     }
-  })
-
-  if(!userExists){
-    c.status(403)
+    const jwt = await sign ({id:userExists.id},c.env.DATABASE_URL)
     return c.json({
-      message : "user not found"
+      jwt:jwt
     })
   }
-  const jwt = sign ({id:userExists.id},c.env.DATABASE_URL)
-  return c.json({
-    jwt:jwt
-  })
+  catch(e){
+    c.status(411)
+    c.text('Some error occured')
+  }
+  
 })
 
 app.get('/api/v1/blog/:id',(c)=>{
