@@ -1,16 +1,18 @@
-import './App.css'
-import './index.css'
 
-
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 
 function App() {
-  
 
   return (
     <>
-      <div>hi</div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/signup"  />
+          <Route path="/signin"  />
+          <Route path="/blog/:id"  />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
