@@ -25,7 +25,7 @@ userRouter.post('/signup', async (c) => {
           password: body.password
         }
       });
-      const jwt = await sign({ id: user.id }, c.env.DATABASE_URL);
+      const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
       return c.json({ jwt });
     } catch (e) {
       console.error(e);
@@ -56,7 +56,7 @@ userRouter.post('/signup', async (c) => {
           message : "user not found"
         })
       }
-      const jwt = await sign ({id:userExists.id},c.env.DATABASE_URL)
+      const jwt = await sign ({id:userExists.id},c.env.JWT_SECRET)
       return c.json({
         jwt:jwt
       })

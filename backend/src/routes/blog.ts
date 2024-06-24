@@ -19,14 +19,19 @@ export const blogRouter = new Hono<{
     const authHeader = c.req.header('authorization')||''
     const user = await verify(authHeader,c.env.JWT_SECRET)
 
-    if(user){
-        //@ts-ignore
-        c.set("userId",user.id)
-        next()
+    try{
+        if(user){
+            //@ts-ignore
+            c.set("userId",user.id)
+            await next()
+        }
+        else{
+            c.status(411)
+            return c.text('You are not logged in')
+        }
     }
-    else{
-        c.status(411)
-        return c.text('You are not logged in')
+    catch(e){
+        return c.json({error:e})
     }
   })
 
@@ -57,15 +62,21 @@ export const blogRouter = new Hono<{
     }).$extends(withAccelerate());
     const body =await  c.req.json()
     const userId = c.get("userId")
-    const blog = await prisma.post.create({
-        data:{
-            title:body.title,
-            content:body.content,
-            authorId:userId
-        }
-    })
-
-    return c.json({id:blog.id})
+    try { 
+        const blog = await prisma.post.create({
+            data:{
+                title:body.title,
+                content:body.content,
+                authorId:userId
+            }
+        })
+    
+        return c.json({id:blog.id}) 
+    }
+    catch(e){
+        c.status(411)
+        return c.json({error:e})
+    }
   })
   
   blogRouter.put('/',async (c)=>{
