@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
@@ -9,6 +9,7 @@ type SignupInput = {
 };
 
 export const AuthSignin = () => {
+    const navigate = useNavigate()
     const [postInputs, setPostInputs] = useState<SignupInput>({
         email: "",
         password: ""
@@ -22,10 +23,11 @@ export const AuthSignin = () => {
                     // Add other headers if needed
                     // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
                 }
-            
             });
             const jwt = response.data;
             localStorage.setItem('token', jwt);
+            navigate('/blogs');
+            
         } catch (e) {
             alert("error while signing in");
             console.log(e);
@@ -62,11 +64,9 @@ export const AuthSignin = () => {
             </div>
             <br />
                 <div className="flex justify-center">
-                    <Link to={'/signin'}>
-                        <button type="button" onClick={sendRequest} className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-28 py-2.5 me-2 mb-2">
-                            Sign In
-                        </button>
-                    </Link>
+                    <button type="button" onClick={sendRequest} className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-28 py-2.5 me-2 mb-2">
+                        Sign In
+                    </button>
                 </div>
         </div>
     );
